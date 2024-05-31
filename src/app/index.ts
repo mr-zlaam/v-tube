@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import { CORS_ORIGIN } from "../config";
 import { DATA_LIMIT } from "../CONSTANTS";
+import { errorHandler, notFoundHandler } from "../middlewares/error.middleware";
 const app = express();
 
 app.use(bodyParser.json({ limit: DATA_LIMIT }));
@@ -23,5 +24,7 @@ app.use(
   })
 );
 app.use(express.static("public"));
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export { app };
