@@ -3,12 +3,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import { CORS_ORIGIN } from "../config";
+import { DATA_LIMIT } from "../CONSTANTS";
 export const app = express();
 
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: DATA_LIMIT }));
 app.use(
   bodyParser.urlencoded({
-    limit: "50mb",
+    limit: DATA_LIMIT,
     extended: true,
     parameterLimit: 50000,
   })
