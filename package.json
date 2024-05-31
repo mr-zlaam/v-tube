@@ -6,7 +6,11 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "predev": "npm run build",
-    "dev": "concurrently \"tsc -w & node\"  \"nodemon --env-file .env ./dist/server\""
+    "dev": "concurrently \"tsc -w & node\"  \"nodemon --env-file .env ./dist/server\"",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "keywords": [],
   "author": "",
@@ -22,6 +26,7 @@
     "mongoose": "^8.3.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.3.0",
     "@types/bcrypt": "^5.0.2",
     "@types/body-parser": "^1.19.5",
     "@types/cookie-parser": "^1.4.7",
@@ -30,8 +35,11 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.11",
     "concurrently": "^8.2.2",
+    "eslint": "^9.3.0",
+    "globals": "^15.3.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "rimraf": "^5.0.6"
+    "rimraf": "^5.0.6",
+    "typescript-eslint": "^7.11.0"
   }
 }
