@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import type { UserModelTypes } from "./types.userModel";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const userSchema = new Schema<UserModelTypes>(
   {
     username: {
@@ -46,4 +48,12 @@ const userSchema = new Schema<UserModelTypes>(
   },
   { timestamps: true }
 );
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+userSchema.methods.isPasswordCorrect = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
 export const User = mongoose.model<UserModelTypes>("UserModel", userSchema);

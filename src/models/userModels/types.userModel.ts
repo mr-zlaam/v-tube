@@ -1,4 +1,4 @@
-import  { Document, Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 export interface UserModelTypes extends Document {
   watchHistory: Schema.Types.ObjectId;
@@ -7,7 +7,7 @@ export interface UserModelTypes extends Document {
   fullName: string;
   avatar: string;
   coverImage: string;
-  password: string;
+  password: any;
   refreshToken: string;
   createdAt: Date;
   updatedAt: Date;
