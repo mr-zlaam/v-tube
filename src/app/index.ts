@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import { CORS_ORIGIN } from "../config";
 import { DATA_LIMIT } from "../CONSTANTS";
-export const app = express();
+const app = express();
 
 app.use(bodyParser.json({ limit: DATA_LIMIT }));
 app.use(
@@ -22,3 +22,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
+app.use(express.static("public"));
+
+export { app };
