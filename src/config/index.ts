@@ -7,8 +7,8 @@ const _config = {
     (process.env.ACCESS_TOKEN_SECRET as string) || OPT_JWT_ACCESS_TOKEN,
   JWT_REFRESH_SECRET:
     (process.env.REFRESH_TOKEN_SECRET as string) || OPT_JWT_REFRESH_TOKEN,
-  ADMIN_EMAIL: process.env.ADMIN_EMAIL as string,
-  ADMIN_PASS: process.env.ADMIN_PASS as string,
+  JWT_ACCESS_EXPIRE: process.env.ACCESS_TOKEN_EXPIRY as string,
+  JWT_REFRESH_EXPIRE: process.env.ACCESS_TOKEN_EXPIRY as string,
   ISDEVELOPMENT_ENVIRONMENT: true, //TODO: change this into false in production.
   CORS_ORIGIN: process.env.CORS_ORIGIN as string,
 };
@@ -18,4 +18,6 @@ export const {
   JWT_ACCESS_SECRET,
   PORT,
   CORS_ORIGIN,
+  JWT_ACCESS_EXPIRE,
+  JWT_REFRESH_EXPIRE,
 } = _config;

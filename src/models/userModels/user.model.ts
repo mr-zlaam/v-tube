@@ -2,6 +2,12 @@ import mongoose, { Schema } from "mongoose";
 import type { UserModelTypes } from "./types.userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import {
+  JWT_ACCESS_EXPIRE,
+  JWT_ACCESS_SECRET,
+  JWT_REFRESH_EXPIRE,
+} from "../../config";
+import { OPT_JWT_REFRESH_TOKEN } from "../../CONSTANTS";
 const userSchema = new Schema<UserModelTypes>(
   {
     username: {
@@ -56,6 +62,20 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
-userSchema.methods.generateAccessToken = function () {};
+userSchema.methods.generateAccessToken = function () {
+  const payload = {
+    _id: this._id,
+    email: this.email,
+    username: this.username,
+    fullName: this.fullName,
+  };
+  return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: JWT_ACCESS_EXPIRE });
+};
+userSchema.methods.generateAccessToken = function () {
+  const payload = { _id: this._id };
+  return jwt.sign(payload, OPT_JWT_REFRESH_TOKEN, {
+    expiresIn: JWT_REFRESH_EXPIRE,
+  });
+};
 userSchema.methods.generateRefreshToken = function () {};
 export const User = mongoose.model<UserModelTypes>("UserModel", userSchema);
