@@ -11,13 +11,20 @@ const _config = {
   JWT_REFRESH_EXPIRE: process.env.ACCESS_TOKEN_EXPIRY as string,
   ISDEVELOPMENT_ENVIRONMENT: true, //TODO: change this into false in production.
   CORS_ORIGIN: process.env.CORS_ORIGIN as string,
+  CLOUDINARY_NAME: process.env.NAME as string,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
 };
 export const {
   MONGO_URI,
   ISDEVELOPMENT_ENVIRONMENT,
   JWT_ACCESS_SECRET,
+  JWT_REFRESH_SECRET,
   PORT,
   CORS_ORIGIN,
   JWT_ACCESS_EXPIRE,
   JWT_REFRESH_EXPIRE,
+  CLOUDINARY_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
 } = _config;

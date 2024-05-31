@@ -1,13 +1,13 @@
-import mongoose, { Schema } from "mongoose";
-import type { UserModelTypes } from "./types.userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose, { Schema } from "mongoose";
 import {
   JWT_ACCESS_EXPIRE,
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRE,
+  JWT_REFRESH_SECRET,
 } from "../../config";
-import { OPT_JWT_REFRESH_TOKEN } from "../../CONSTANTS";
+import type { UserModelTypes } from "./types.userModel";
 const userSchema = new Schema<UserModelTypes>(
   {
     username: {
@@ -73,7 +73,7 @@ userSchema.methods.generateAccessToken = function () {
 };
 userSchema.methods.generateAccessToken = function () {
   const payload = { _id: this._id };
-  return jwt.sign(payload, OPT_JWT_REFRESH_TOKEN, {
+  return jwt.sign(payload, JWT_REFRESH_SECRET, {
     expiresIn: JWT_REFRESH_EXPIRE,
   });
 };
