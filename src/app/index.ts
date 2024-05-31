@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import express from "express";
 import cors from "cors";
+import express from "express";
 import { CORS_ORIGIN } from "../config";
 export const app = express();
 
