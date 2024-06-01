@@ -37,13 +37,13 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     email: email.toLowerCase(),
     password,
   });
-  const isUserCreated = await User.findById(user._id).select(
+  const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
-  if (!isUserCreated)
+  if (!createdUser)
     throw { status: 500, message: "unable to create user for some reason!!" };
   return res
     .status(201)
-    .json(new ApiResponse(201, "user created successfully"));
+    .json(new ApiResponse(201, createdUser, "user created successfully"));
 });
 export { RegisterUser };
