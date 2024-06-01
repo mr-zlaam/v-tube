@@ -21,7 +21,7 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     };
   //avatar getting
   const avatarLocalPath: string = req.files?.avatar[0].path;
-  // const coverImageLocalPath: string = req.files?.coverImage[0]?.path;
+
   let coverImageLocalPath;
   if (
     req.files &&
@@ -55,5 +55,8 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     .status(201)
     .json(new ApiResponse(201, createdUser, "user registered  successfully"));
 });
-const LoginUser = asyncHandler(async (req: Request, res: Response) => {});
+const LoginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password }: UserModelTypes = req.body;
+  res.send("hello world");
+});
 export { RegisterUser, LoginUser };
