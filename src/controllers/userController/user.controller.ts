@@ -1,10 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
-import { asyncHandler } from "../../utils/asynchandler";
+import type { Request, Response } from "express";
 import { UserModelTypes } from "../../models/userModels/types.userModel";
-import { upload } from "../../middlewares/multer.middleware";
 import { User } from "../../models/userModels/user.model";
-import { uploadOnCloudinary } from "../../utils/cloudinary";
 import { ApiResponse } from "../../utils/apiResponse";
+import { asyncHandler } from "../../utils/asynchandler";
+import { uploadOnCloudinary } from "../../utils/cloudinary";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -56,4 +55,5 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     .status(201)
     .json(new ApiResponse(201, createdUser, "user registered  successfully"));
 });
-export { RegisterUser };
+const LoginUser = asyncHandler(async (req: Request, res: Response) => {});
+export { RegisterUser, LoginUser };
