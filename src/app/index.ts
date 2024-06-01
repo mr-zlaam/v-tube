@@ -2,8 +2,8 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import { CORS_ORIGIN } from "../config";
 import { DATA_LIMIT } from "../CONSTANTS";
+import { CORS_ORIGIN } from "../config";
 import { errorHandler, notFoundHandler } from "../middlewares/error.middleware";
 const app = express();
 
@@ -26,7 +26,6 @@ app.use(
 app.use(express.static("public"));
 //Routes
 import userRouter from "../routes/userRoutes/user.routes";
-import { ApiError } from "../utils/apiError";
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use(notFoundHandler);
