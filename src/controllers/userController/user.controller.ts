@@ -57,6 +57,7 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
 });
 const LoginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password }: UserModelTypes = req.body;
+
   res.send("hello world");
 });
 export { RegisterUser, LoginUser };
