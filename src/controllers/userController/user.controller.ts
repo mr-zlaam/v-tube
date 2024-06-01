@@ -22,21 +22,28 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     };
   //avatar getting
   const avatarLocalPath: string = req.files?.avatar[0].path;
-  const coverImageLocalPath: string = req.files?.coverImage[0]?.path;
-  console.log(avatarLocalPath);
-  console.log(coverImageLocalPath);
+  // const coverImageLocalPath: string = req.files?.coverImage[0]?.path;
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0]?.path;
+  }
+
   if (!avatarLocalPath) {
     throw { status: 400, message: "avatar file is required!!" };
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath!);
   if (!avatar) throw { status: 400, message: "avatarfile is required!!" };
 
   const user = await User.create({
     username: username.toLowerCase(),
     fullName,
     avatar: avatar.url,
-    coverImage: coverImage ? coverImage.url : "",
+    coverImage: (coverImage !== undefined && coverImage?.url) || "",
     email: email.toLowerCase(),
     password,
   });
