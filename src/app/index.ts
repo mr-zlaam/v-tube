@@ -1,3 +1,4 @@
+import userRouter from "../routes/userRoutes/user.routes";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -26,8 +27,7 @@ app.use(
 app.use(express.static("public"));
 app.use(notFoundHandler);
 app.use(errorHandler);
-//Routes
-import userRouter from "../routes/userRoutes/user.routes";
-//routes declaration
-userRouter.use("/api/v1/users", userRouter);
+// Routes
+// routes declaration
+app.use("/api/v1/users", userRouter);
 export { app };
