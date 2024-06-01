@@ -1,4 +1,3 @@
-import userRouter from "../routes/userRoutes/user.routes";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -25,9 +24,11 @@ app.use(
   })
 );
 app.use(express.static("public"));
+//Routes
+import userRouter from "../routes/userRoutes/user.routes";
+import { ApiError } from "../utils/apiError";
+//routes declaration
+app.use("/api/v1/users", userRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
-// Routes
-// routes declaration
-app.use("/api/v1/users", userRouter);
 export { app };

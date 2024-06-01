@@ -26,10 +26,11 @@ export const errorHandler = (
   res.json({
     error: {
       success: false,
-      statusCode: error.status,
+      statusCode: error.status || 500,
       message: error.message || "some thing went wrong!!",
       data: null,
-      stack: ISDEVELOPMENT_ENVIRONMENT
+      stack: error.stack,
+      stacks: ISDEVELOPMENT_ENVIRONMENT
         ? error.stack
           ? error.stack
           : "No stack has been sent"
