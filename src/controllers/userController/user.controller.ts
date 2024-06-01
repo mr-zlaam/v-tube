@@ -44,6 +44,6 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     throw { status: 500, message: "unable to create user for some reason!!" };
   return res
     .status(201)
-    .json(new ApiResponse(201, createdUser, "user created successfully"));
+    .json(new ApiResponse(201, createdUser, "user registered  successfully"));
 });
 export { RegisterUser };
