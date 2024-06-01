@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "predev": "npm run build",
-    "dev": "concurrently \"tsc -w & node\"  \"nodemon --env-file .env ./dist/server\"",
+    "dev": "concurrently \"tsc -w & node\"  \"nodemon --env-file .env ./dist/src/server/index.js\"",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
