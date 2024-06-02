@@ -5,3 +5,11 @@ export interface AuthRequest extends Request {
   _id?: string;
   user?: UserModelTypes;
 }
+export interface decodedTokenTypes {
+  _id: string;
+  email: string;
+  username: string;
+  fullName: string;
+  iat: number;
+  exp: number;
+}

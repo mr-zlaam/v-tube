@@ -70,7 +70,7 @@ const LoginUser = asyncHandler(async (req: Request, res: Response) => {
   */
 
   const { username, email, password }: UserModelTypes = req.body;
-  if (!username || !email)
+  if (!username && !email)
     throw { status: 400, message: "username or email is required!!" };
   if (!password) throw { status: 400, message: "password is required!!" };
   const user = await User.findOne({
@@ -97,7 +97,7 @@ const LoginUser = asyncHandler(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         200,
-        { user: loggedInUser, accessToken, refreshToken },
+        { user: loggedInUser, accessToken },
         `${user.username || "user"} logged in successfully.`
       )
     );
