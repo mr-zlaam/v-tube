@@ -5,6 +5,7 @@ import { ApiResponse } from "../../utils/apiResponse";
 import { asyncHandler } from "../../utils/asynchandler";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 import { generateAccessAndRefreshCode } from "../../utils/generateTokens";
+import { ISDEVELOPMENT_ENVIRONMENT } from "../../config";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -77,7 +78,33 @@ const LoginUser = asyncHandler(async (req: Request, res: Response) => {
   if (!user) throw { status: 404, message: "user doesn't exist!!" };
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) throw { status: 401, message: "Invalid credentials!!" };
-  await generateAccessAndRefreshCode(user._id as string);
-  res.send("hello world");
+  //generate token
+  const { accessToken, refreshToken } = await generateAccessAndRefreshCode(
+    user?._id as string
+  );
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refresToken"
+  );
+  const cookieOptions = {
+    httpOnly: true,
+    secure: !ISDEVELOPMENT_ENVIRONMENT && true,
+  };
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refresToken", refreshToken, cookieOptions)
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedInUser, accessToken, refreshToken },
+        `${user.username || "user"} logged in successfully.`
+      )
+    );
 });
+
+//Logout functionality
+const LogoutUser = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+});
+
 export { RegisterUser, LoginUser };
