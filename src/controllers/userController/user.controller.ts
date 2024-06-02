@@ -56,7 +56,26 @@ const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, createdUser, "user registered  successfully"));
 });
 const LoginUser = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password }: UserModelTypes = req.body;
+  /*
+  # Algo for sing in
+  *1 Get data from req.body
+  *2 check if user exist
+  *3 if user exist check if password is correct
+  *4 if password is correct generate token
+  *5 if token is generated send token to client through secure cookies.
+
+  */
+
+  const { username, email, password }: UserModelTypes = req.body;
+  if (!username || !email)
+    throw { status: 400, message: "username or email is required!!" };
+  if (!password) throw { status: 400, message: "password is required!!" };
+  const user = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+  if (!user) throw { status: 404, message: "user doesn't exist!!" };
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) throw { status: 401, message: "Invalid credentials!!" };
 
   res.send("hello world");
 });
