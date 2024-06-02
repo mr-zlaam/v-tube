@@ -8,6 +8,7 @@ import { generateAccessAndRefreshCode } from "../../utils/generateTokens";
 import { ISDEVELOPMENT_ENVIRONMENT, JWT_REFRESH_SECRET } from "../../config";
 import { AuthRequest } from "../../types";
 import jwt from "jsonwebtoken";
+import { COOKIES_OPTION } from "../../CONSTANTS";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -87,14 +88,11 @@ const LoginUser = asyncHandler(async (req: Request, res: Response) => {
   const loggedInUser = await User.findById(user._id).select(
     "-password -refresToken"
   );
-  const cookieOptions = {
-    httpOnly: true,
-    secure: !ISDEVELOPMENT_ENVIRONMENT && true,
-  };
+
   return res
     .status(200)
-    .cookie("accessToken", accessToken, cookieOptions)
-    .cookie("refresToken", refreshToken, cookieOptions)
+    .cookie("accessToken", accessToken, COOKIES_OPTION)
+    .cookie("refresToken", refreshToken, COOKIES_OPTION)
     .json(
       new ApiResponse(
         200,
@@ -116,14 +114,11 @@ const LogoutUser = asyncHandler(async (req: AuthRequest, res: Response) => {
       new: true,
     }
   );
-  const cookieOptions = {
-    httpOnly: true,
-    secure: !ISDEVELOPMENT_ENVIRONMENT && true,
-  };
+
   return res
     .status(200)
-    .clearCookie("accessToken", cookieOptions)
-    .clearCookie("refreshToken", cookieOptions)
+    .clearCookie("accessToken", COOKIES_OPTION)
+    .clearCookie("refreshToken", COOKIES_OPTION)
     .json(new ApiResponse(200, {}, "user logged out successfully!!"));
 });
 
@@ -139,15 +134,42 @@ const RefreshaccessToken = asyncHandler(
         status: 401,
         message: "Unauthorized request while getting incoming refresToken!!",
       };
-    const decodedRefreshToken = jwt.verify(
-      incomingRefreshToken,
-      JWT_REFRESH_SECRET
-    ) as decodedRefreshTokenType;
+    let decodedRefreshToken;
+    try {
+      decodedRefreshToken = jwt.verify(
+        incomingRefreshToken,
+        JWT_REFRESH_SECRET
+      ) as decodedRefreshTokenType;
+    } catch (error: any) {
+      console.error(error.message);
+      throw {
+        status: 500,
+        message:
+          error.message ||
+          "some thing went wrong while verifying refreshToken.",
+      };
+    }
     const userID = decodedRefreshToken?._id;
     const user = await User.findById(userID);
     if (!user) {
       throw { status: 401, message: "invalid refresh token" };
     }
+    if (user?.refreshToken !== incomingRefreshToken)
+      throw { status: 401, message: "invalid refresh expired or used!!" };
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateAccessAndRefreshCode(user?._id as string);
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, COOKIES_OPTION)
+      .cookie("refreshToken", newRefreshToken, COOKIES_OPTION)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "Access Token Refreshed."
+        )
+      );
+    //LAST LINE
   }
 );
 export { RegisterUser, LoginUser, LogoutUser, RefreshaccessToken };
