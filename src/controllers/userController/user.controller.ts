@@ -5,8 +5,9 @@ import { ApiResponse } from "../../utils/apiResponse";
 import { asyncHandler } from "../../utils/asynchandler";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 import { generateAccessAndRefreshCode } from "../../utils/generateTokens";
-import { ISDEVELOPMENT_ENVIRONMENT } from "../../config";
+import { ISDEVELOPMENT_ENVIRONMENT, JWT_REFRESH_SECRET } from "../../config";
 import { AuthRequest } from "../../types";
+import jwt from "jsonwebtoken";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -126,7 +127,27 @@ const LogoutUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     .json(new ApiResponse(200, {}, "user logged out successfully!!"));
 });
 
+interface decodedRefreshTokenType {
+  _id: string;
+}
 const RefreshaccessToken = asyncHandler(
-  async (req: AuthRequest, res: Response) => {}
+  async (req: AuthRequest, res: Response) => {
+    const incomingRefreshToken =
+      req.cookies.refreshToken || req.body.refreshtoken;
+    if (!incomingRefreshToken)
+      throw {
+        status: 401,
+        message: "Unauthorized request while getting incoming refresToken!!",
+      };
+    const decodedRefreshToken = jwt.verify(
+      incomingRefreshToken,
+      JWT_REFRESH_SECRET
+    ) as decodedRefreshTokenType;
+    const userID = decodedRefreshToken?._id;
+    const user = await User.findById(userID);
+    if (!user) {
+      throw { status: 401, message: "invalid refresh token" };
+    }
+  }
 );
 export { RegisterUser, LoginUser, LogoutUser, RefreshaccessToken };
