@@ -6,6 +6,7 @@ import { asyncHandler } from "../../utils/asynchandler";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 import { generateAccessAndRefreshCode } from "../../utils/generateTokens";
 import { ISDEVELOPMENT_ENVIRONMENT } from "../../config";
+import { AuthRequest } from "../../types";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -103,8 +104,26 @@ const LoginUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //Logout functionality
-const LogoutUser = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
+const LogoutUser = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userID = req.user?._id;
+  await User.findByIdAndUpdate(
+    userID,
+    {
+      $set: { refreshToken: undefined },
+    },
+    {
+      new: true,
+    }
+  );
+  const cookieOptions = {
+    httpOnly: true,
+    secure: !ISDEVELOPMENT_ENVIRONMENT && true,
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new ApiResponse(200, {}, "user logged out successfully!!"));
 });
 
-export { RegisterUser, LoginUser };
+export { RegisterUser, LoginUser, LogoutUser };
