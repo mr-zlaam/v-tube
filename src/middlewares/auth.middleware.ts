@@ -7,7 +7,7 @@ import { User } from "../models/userModels/user.model";
 import { AuthRequest } from "../types";
 
 export const verifyJwt = asyncHandler(
-  async (req: AuthRequest, res: Response, next: NextFunction) => {
+  async (req: AuthRequest, _: Response, next: NextFunction) => {
     try {
       const token =
         req.cookies?.accessToken ||
