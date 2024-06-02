@@ -143,7 +143,7 @@ const RefreshaccessToken = asyncHandler(
     } catch (error: any) {
       console.error(error.message);
       throw {
-        status: 500,
+        status: error.status || 401,
         message:
           error.message ||
           "some thing went wrong while verifying refreshToken.",
