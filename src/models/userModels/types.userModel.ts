@@ -11,5 +11,8 @@ export interface UserModelTypes extends Document {
   refreshToken: string;
   createdAt: Date;
   updatedAt: Date;
+  //methods
   isPasswordCorrect: (password: string) => Promise<boolean>;
+  generateAccessToken: () => void;
+  generateRefreshToken: () => void;
 }

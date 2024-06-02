@@ -71,11 +71,10 @@ userSchema.methods.generateAccessToken = function () {
   };
   return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: JWT_ACCESS_EXPIRE });
 };
-userSchema.methods.generateAccessToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   const payload = { _id: this._id };
   return jwt.sign(payload, JWT_REFRESH_SECRET, {
     expiresIn: JWT_REFRESH_EXPIRE,
   });
 };
-userSchema.methods.generateRefreshToken = function () {};
 export const User = mongoose.model<UserModelTypes>("UserModel", userSchema);
