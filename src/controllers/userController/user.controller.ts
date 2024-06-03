@@ -187,10 +187,18 @@ const ChangeCurrentPassword = asyncHandler(
       .json(new ApiResponse(200, {}, "Password changed successfully."));
   }
 );
+const GetCurrentUser = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const currentUser = req.user;
+  if (!currentUser) throw { status: 404, message: "user not found" };
+  return res
+    .status(200)
+    .json(new ApiResponse(200, currentUser, "user Fetched successfullly"));
+});
 export {
   RegisterUser,
   LoginUser,
   LogoutUser,
   RefreshaccessToken,
   ChangeCurrentPassword,
+  GetCurrentUser,
 };
