@@ -279,6 +279,36 @@ const UpdateCoverImage = asyncHandler(
     }
   }
 );
+const GetUserChannelProfile = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { username } = req.params;
+    if (!username?.trim())
+      throw { status: 400, message: "username is required" };
+    const channel = await User.aggregate([
+      {
+        $match: {
+          username: username?.toLowerCase(),
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "channel",
+          as: "subscribers",
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "subscriber",
+          as: "subscribe to",
+        },
+      },
+    ]);
+  }
+);
 export {
   RegisterUser,
   LoginUser,
@@ -289,4 +319,5 @@ export {
   UpdateAccountDetails,
   UpdateAvatar,
   UpdateCoverImage,
+  GetUserChannelProfile,
 };
