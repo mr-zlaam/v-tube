@@ -13,3 +13,6 @@ export interface decodedTokenTypes {
   iat: number;
   exp: number;
 }
+export interface decodedRefreshTokenType {
+  _id: string;
+}

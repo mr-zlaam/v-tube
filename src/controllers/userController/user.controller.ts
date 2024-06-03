@@ -6,10 +6,10 @@ import { asyncHandler } from "../../utils/asynchandler";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 import { generateAccessAndRefreshCode } from "../../utils/generateTokens";
 import { ISDEVELOPMENT_ENVIRONMENT, JWT_REFRESH_SECRET } from "../../config";
-import { AuthRequest } from "../../types";
+import { AuthRequest, decodedRefreshTokenType } from "../../types";
 import jwt from "jsonwebtoken";
 import { COOKIES_OPTION } from "../../CONSTANTS";
-import { unlinkSync } from "node:fs";
+import { DeleteImageFromLocalServer } from "../../utils/ImageDelete";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -123,9 +123,6 @@ const LogoutUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     .json(new ApiResponse(200, {}, "user logged out successfully!!"));
 });
 
-interface decodedRefreshTokenType {
-  _id: string;
-}
 const RefreshaccessToken = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const incomingRefreshToken =
@@ -226,7 +223,7 @@ const UpdateAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
     throw { status: 500, message: "Error while updating avatart file" };
   }
   if (uploadedAvatar?.url) {
-    unlinkSync(avatarLocalPath);
+    DeleteImageFromLocalServer(avatarLocalPath);
     const userId = req.user?._id;
     let user;
     if (userId) {
@@ -259,7 +256,7 @@ const UpdateCoverImage = asyncHandler(
       throw { status: 500, message: "Error while updating avatart file" };
     }
     if (uploadedCoverImage?.url) {
-      unlinkSync(coverImageLocalPath);
+      DeleteImageFromLocalServer(coverImageLocalPath);
       const userId = req.user?._id;
       let user;
       if (userId) {
