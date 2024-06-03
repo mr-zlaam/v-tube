@@ -228,8 +228,9 @@ const UpdateAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (uploadedAvatar?.url) {
     unlinkSync(avatarLocalPath);
     const userId = req.user?._id;
+    let user;
     if (userId) {
-      await User.findById(
+      user = await User.findByIdAndUpdate(
         userId,
         { $set: { avatar: uploadedAvatar.url } },
         { new: true }
@@ -242,9 +243,45 @@ const UpdateAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
     }
     return res
       .status(201)
-      .json(new ApiResponse(201, {}, "avatar Image updated successfully."));
+      .json(
+        new ApiResponse(201, { user }, "avatar Image updated successfully.")
+      );
   }
 });
+const UpdateCoverImage = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const coverImageLocalPath = req.file?.path;
+    if (!coverImageLocalPath) {
+      throw { status: 401, message: "Avatar Image is required!!" };
+    }
+    const uploadedCoverImage = await uploadOnCloudinary(coverImageLocalPath);
+    if (!uploadedCoverImage?.url) {
+      throw { status: 500, message: "Error while updating avatart file" };
+    }
+    if (uploadedCoverImage?.url) {
+      unlinkSync(coverImageLocalPath);
+      const userId = req.user?._id;
+      let user;
+      if (userId) {
+        user = await User.findByIdAndUpdate(
+          userId,
+          { $set: { coverImage: uploadedCoverImage.url } },
+          { new: true }
+        ).select("-password");
+      } else {
+        throw {
+          status: 500,
+          message: "something went wrong while updating cover Image",
+        };
+      }
+      return res
+        .status(201)
+        .json(
+          new ApiResponse(201, { user }, "cover Image updated successfully.")
+        );
+    }
+  }
+);
 export {
   RegisterUser,
   LoginUser,
@@ -254,4 +291,5 @@ export {
   GetCurrentUser,
   UpdateAccountDetails,
   UpdateAvatar,
+  UpdateCoverImage,
 };
