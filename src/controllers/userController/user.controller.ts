@@ -321,7 +321,26 @@ const GetUserChannelProfile = asyncHandler(
           },
         },
       },
+      {
+        $project: {
+          fullName: 1,
+          username: 1,
+          subscribersCount: 1,
+          channelsSubscribeToCount: 1,
+          isSubscribed: 1,
+          avatar: 1,
+          email: 1,
+          coverImage: 1,
+        },
+      },
     ]);
+    console.log("Channel returning the value:::", channel);
+    if (!channel?.length) throw { status: 404, message: "Channel not found" };
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, channel[0], "User channe fetched successfully.")
+      );
   }
 );
 export {
