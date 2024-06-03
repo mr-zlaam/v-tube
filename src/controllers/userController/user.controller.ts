@@ -9,6 +9,7 @@ import { ISDEVELOPMENT_ENVIRONMENT, JWT_REFRESH_SECRET } from "../../config";
 import { AuthRequest } from "../../types";
 import jwt from "jsonwebtoken";
 import { COOKIES_OPTION } from "../../CONSTANTS";
+import { unlinkSync } from "node:fs";
 const RegisterUser = asyncHandler(async (req: Request, res: Response) => {
   //multer files
   req.files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -215,6 +216,35 @@ const UpdateAccountDetails = asyncHandler(
       );
   }
 );
+const UpdateAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const avatarLocalPath = req.file?.path;
+  if (!avatarLocalPath) {
+    throw { status: 401, message: "Avatar Image is required!!" };
+  }
+  const uploadedAvatar = await uploadOnCloudinary(avatarLocalPath);
+  if (!uploadedAvatar?.url) {
+    throw { status: 500, message: "Error while updating avatart file" };
+  }
+  if (uploadedAvatar?.url) {
+    unlinkSync(avatarLocalPath);
+    const userId = req.user?._id;
+    if (userId) {
+      await User.findById(
+        userId,
+        { $set: { avatar: uploadedAvatar.url } },
+        { new: true }
+      ).select("-password");
+    } else {
+      throw {
+        status: 500,
+        message: "something went wrong while updating avatar Image",
+      };
+    }
+    return res
+      .status(201)
+      .json(new ApiResponse(201, {}, "avatar Image updated successfully."));
+  }
+});
 export {
   RegisterUser,
   LoginUser,
@@ -223,4 +253,5 @@ export {
   ChangeCurrentPassword,
   GetCurrentUser,
   UpdateAccountDetails,
+  UpdateAvatar,
 };
